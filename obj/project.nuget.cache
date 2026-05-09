@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "6txwGTXovO0=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\samed\\Projet_api2\\Projet_api2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\samed\\.nuget\\packages\\dapper\\2.1.72\\dapper.2.1.72.nupkg.sha512",
+    "C:\\Users\\samed\\.nuget\\packages\\npgsql\\10.0.2\\npgsql.10.0.2.nupkg.sha512"
+  ],
+  "logs": []
+}
