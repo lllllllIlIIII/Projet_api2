@@ -99,3 +99,4 @@ C:\Users\samed\Projet_api2\bin\Debug\net10.0\Dapper.dll
 C:\Users\samed\Projet_api2\bin\Debug\net10.0\Npgsql.dll
 C:\Users\samed\Projet_api2\obj\Debug\net10.0\Projet_api2.csproj.AssemblyReference.cache
 C:\Users\samed\Projet_api2\obj\Debug\net10.0\Projet_a.E75B7AFE.Up2Date
+C:\Users\samed\Projet_api2\obj\Debug\net10.0\Projet_api2.sourcelink.json
