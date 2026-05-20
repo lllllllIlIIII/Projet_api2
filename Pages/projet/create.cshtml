@@ -1,0 +1,39 @@
+﻿@page
+@model Projet_api2.Pages.projet.CreateModel
+@{
+    ViewData["Title"] = "Demande de Projet";
+}
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 border-top border-primary border-4">
+            <div class="card-body p-4">
+                <h3 class="fw-bold mb-3">Nouvelle demande de projet</h3>
+                <p class="text-muted">Remplissez ce formulaire. Un administrateur devra valider la création de ce projet pour qu'il soit actif.</p>
+                
+                <form method="post">
+                    <div class="mb-3">
+                        <label asp-for="NouveauProjet.Nom" class="form-label fw-bold">Nom du projet</label>
+                        <input asp-for="NouveauProjet.Nom" class="form-control" placeholder="Ex: Refonte du site web" />
+                        <span asp-validation-for="NouveauProjet.Nom" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label asp-for="NouveauProjet.Description" class="form-label fw-bold">Description détaillée</label>
+                        <textarea asp-for="NouveauProjet.Description" class="form-control" rows="4" placeholder="Expliquez les objectifs..."></textarea>
+                        <span asp-validation-for="NouveauProjet.Description" class="text-danger small"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="/Index" class="btn btn-outline-secondary">Annuler</a>
+                        <button type="submit" class="btn btn-primary fw-bold px-4">Soumettre la demande</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

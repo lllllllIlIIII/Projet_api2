@@ -1,0 +1,235 @@
+﻿@page "{id:int}"
+@using System.Security.Claims
+@model Projet_api2.Pages.projet.DetailsModel
+@{
+    ViewData["Title"] = "Détails du Projet";
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    bool isChefDeProjetOuAdmin = Model.Projet != null && (currentUserId == Model.Projet.CreatedBy.ToString() || User.IsInRole("Admin"));
+}
+
+@if (Model.Projet != null)
+{
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="/Index" class="text-decoration-none">Hub</a></li>
+                    <li class="breadcrumb-item active">Détails</li>
+                </ol>
+            </nav>
+            <h2 class="fw-bold m-0">@Model.Projet.Nom</h2>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-page-handler="ExportPdf" asp-route-id="@Model.Projet.Id" class="btn btn-outline-danger fw-bold rounded-pill px-3 shadow-sm">
+                <i class="bi bi-file-earmark-pdf"></i> Exporter PDF
+            </a>
+            <a href="/Index" class="btn btn-navy text-white fw-bold rounded-pill px-3 shadow-sm" style="background-color: #123e7a;">
+                Retour au Hub
+            </a>
+        </div>
+    </div>
+
+    <ul class="nav nav-pills mb-4 bg-light p-2 rounded-3 shadow-sm" id="projectTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active fw-bold px-4" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                Vue d'ensemble & Équipe
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link fw-bold px-4" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab">
+                Suivi des Tâches (@Model.Taches.Count)
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="projectTabContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="fw-bold m-0 text-primary">Informations Générales</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <label class="text-muted small fw-bold text-uppercase">Statut du Projet</label>
+                                <div class="mt-1">
+                                    <span class="badge rounded-pill bg-success bg-opacity-25 text-success px-3 py-2">
+                                        @Model.Projet.Status
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row mb-4">
+                                <div class="col-6">
+                                    <label class="text-muted small fw-bold text-uppercase">Chef de Projet</label>
+                                    <p class="fw-bold m-0 text-dark">@Model.Projet.NomCreateur</p>
+                                </div>
+                                <div class="col-6">
+                                    <label class="text-muted small fw-bold text-uppercase">Date de Création</label>
+                                    <p class="m-0 text-dark">@Model.Projet.DateCreation.ToString("dd MMMM yyyy")</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-muted small fw-bold text-uppercase">Description</label>
+                                <p class="text-secondary mt-1" style="white-space: pre-line;">@Model.Projet.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-3">
+                        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold m-0 text-primary">Collaborateurs</h5>
+                            <span class="badge bg-primary text-white rounded-pill">@Model.Membres.Count membres</span>
+                        </div>
+                        <div class="card-body p-0">
+                            @if (isChefDeProjetOuAdmin)
+                            {
+                                <div class="p-4 bg-light border-bottom">
+                                    <form method="post" asp-page-handler="AjouterMembre" asp-route-id="@Model.Projet.Id">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <select name="selectedUserId" class="form-select" required>
+                                                    <option value="">-- Choisir un utilisateur --</option>
+                                                    @foreach (var u in Model.TousLesUsers)
+                                                    {
+                                                        <option value="@u.Id">@u.Prenom @u.Nom</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <select name="selectedRole" class="form-select" required>
+                                                    <option value="">-- Rôle --</option>
+                                                    <option value="Développeur">Développeur</option>
+                                                    <option value="Designer">Designer</option>
+                                                    <option value="Testeur">Testeur</option>
+                                                    <option value="Analyste">Analyste</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-12">
+                                                <button type="submit" class="btn btn-primary text-white fw-bold w-100">Ajouter à l'équipe</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            }
+
+                            <ul class="list-group list-group-flush">
+                                @foreach (var m in Model.Membres)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center p-3 border-0 border-bottom">
+                                        <div>
+                                            <div class="fw-bold text-dark">@m.Membre.Prenom @m.Membre.Nom</div>
+                                            <div class="text-muted small">@m.Role</div>
+                                        </div>
+                                        @if (isChefDeProjetOuAdmin)
+                                        {
+                                            <form method="post" asp-page-handler="SupprimerMembre" asp-route-id="@Model.Projet.Id" asp-route-userId="@m.Membre.Id" onsubmit="return confirm('Retirer ce membre ?');">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle">×</button>
+                                            </form>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="tasks" role="tabpanel">
+            <div class="row justify-content-center">
+                <div class="col-xl-9">
+                    @if (isChefDeProjetOuAdmin)
+                    {
+                        <div class="card border-0 shadow-sm rounded-3 mb-4">
+                            <div class="card-body p-4">
+                                <h5 class="fw-bold mb-4">Nouvelle Tâche</h5>
+                                <form method="post" asp-page-handler="AjouterTache" asp-route-id="@Model.Projet.Id">
+                                    <div class="row g-3">
+                                        <div class="col-md-8">
+                                            <input type="text" name="titreTache" class="form-control" placeholder="Titre de la tâche..." required />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select name="assignedToUserId" class="form-select" required>
+                                                <option value="">-- Assigner à --</option>
+                                                @foreach (var m in Model.Membres)
+                                                {
+                                                    <option value="@m.Membre.Id">@m.Membre.Prenom @m.Membre.Nom</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <textarea name="commentaireTache" class="form-control" rows="2" placeholder="Instructions supplémentaires..."></textarea>
+                                        </div>
+                                        <div class="col-12 text-end">
+                                            <button type="submit" class="btn btn-primary fw-bold px-5">Créer la tâche</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="card border-0 shadow-sm rounded-3">
+                        <div class="card-header bg-white border-bottom py-3">
+                            <h5 class="fw-bold m-0">Liste des Tâches</h5>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            @if (!Model.Taches.Any())
+                            {
+                                <li class="list-group-item text-center py-5 text-muted">
+                                    Aucune tâche n'a encore été créée pour ce projet.
+                                </li>
+                            }
+                            else
+                            {
+                                @foreach (var tache in Model.Taches)
+                                {
+                                    <li class="list-group-item p-4 border-0 border-bottom">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="flex-grow-1">
+                                                <h6 class="fw-bold @(tache.IsCompleted ? "text-decoration-line-through text-muted" : "text-dark")">@tache.Titre</h6>
+                                                <div class="small text-secondary mb-2">Assigné à : <strong>@tache.NomAssigne</strong></div>
+                                                @if (!string.IsNullOrEmpty(tache.Commentaire))
+                                                {
+                                                    <div class="p-2 bg-light rounded small text-secondary">
+                                                        @tache.Commentaire
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="ms-4">
+                                                @if (currentUserId == tache.AssignedTo.ToString())
+                                                {
+                                                    <form method="post" asp-page-handler="BasculerStatutTache" asp-route-id="@Model.Projet.Id">
+                                                        <input type="hidden" name="tacheId" value="@tache.Id" />
+                                                        <input type="hidden" name="actuelStatut" value="@(tache.IsCompleted ? "true" : "false")" />
+                                                        @if (tache.IsCompleted)
+                                                        {
+                                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3">Terminée</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-3">En cours</button>
+                                                        }
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge rounded-pill @(tache.IsCompleted ? "bg-success" : "bg-secondary") bg-opacity-25 @(tache.IsCompleted ? "text-success" : "text-secondary") px-3 py-2">
+                                                        @(tache.IsCompleted ? "Terminée" : "En cours")
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
