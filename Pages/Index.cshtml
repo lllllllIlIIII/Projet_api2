@@ -1,10 +1,53 @@
 ﻿@page
-@model IndexModel
+@model Projet_api2.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Accueil";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>bonjour la famille</p>
+<div class="mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold d-flex align-items-center text-dark m-0">
+            Projets actifs
+        </h2>
+        <a asp-page="/projet/create" class="btn btn-info text-white rounded-pill px-4 fw-bold shadow-sm">
+            Proposer un projet
+        </a>
+    </div>
+
+    <form method="get" class="d-flex mb-5 gap-2" style="max-width: 500px;">
+        <input type="text" name="SearchTerm" value="@Model.SearchTerm" class="form-control shadow-sm border-0" placeholder="Rechercher un projet..." />
+        <button type="submit" class="btn btn-primary fw-bold px-4 shadow-sm rounded-3">Rechercher</button>
+    </form>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
+        @if (!Model.Projets.Any())
+        {
+            <div class="col-12">
+                <div class="alert alert-light text-center text-muted shadow-sm py-5 rounded-3 border-0">
+                    Aucun projet trouvé.
+                </div>
+            </div>
+        }
+        else
+        {
+            @foreach (var projet in Model.Projets)
+            {
+                <partial name="_projet" model="projet" />
+            }
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Navigation des pages">
+            <ul class="pagination justify-content-center">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link shadow-sm fw-bold px-3 py-2 mx-1 rounded" asp-page="./Index" asp-route-CurrentPage="@i" asp-route-SearchTerm="@Model.SearchTerm">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
 </div>
