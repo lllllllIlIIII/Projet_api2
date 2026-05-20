@@ -1,52 +1,52 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Projet_api2</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] PManager</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Projet_api2.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Projet_api2</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+    <a class="navbar-brand text-white fw-bold" asp-page="/Index">Pmanager</a>
+    
+    <div class="navbar-nav ms-auto align-items-center">
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a class="nav-link text-white" asp-page="/Index">Projets</a>
+            <a class="nav-link text-white" asp-page="/projet/create">Proposer</a>
+            
+            @if (User.IsInRole("Admin"))
+            {
+                <a class="nav-link text-warning fw-bold" asp-page="/admin/dashboard">Admin</a>
+            }
+            
+            <span class="navbar-text text-light mx-3">@User.Identity.Name</span>
+            
+            <form method="post" asp-page="/account/Logout" class="d-inline">
+                <button type="submit" class="btn btn-outline-danger btn-sm">Déconnexion</button>
+            </form>
+        }
+        else
+        {
+            <a class="nav-link text-white" asp-page="/Account/Login">Connexion</a>
+        }
     </div>
+</nav>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Projet_api2 - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
+<main class="container mt-4">
+    @RenderBody()
+</main>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+<footer class="footer mt-auto py-3 bg-light text-center">
+    <div class="container">
+        <span class="text-muted">Project manager &copy; @DateTime.Now.Year</span>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
 
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
