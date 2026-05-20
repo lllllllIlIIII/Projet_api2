@@ -1,0 +1,111 @@
+﻿@page
+@model Projet_api2.Pages.admin.DashboardModel
+@{
+    ViewData["Title"] = "Panel Administrateur";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold">Panneau d'Administration</h2>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @Model.ErrorMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-5 mb-4">
+        <div class="card shadow-sm border-0 border-top border-warning border-4">
+            <div class="card-header bg-white fw-bold">
+                Créer un utilisateur
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NouvelUtilisateur.Prenom" class="form-label fw-bold">Prénom</label>
+                            <input asp-for="NouvelUtilisateur.Prenom" class="form-control" />
+                            <span asp-validation-for="NouvelUtilisateur.Prenom" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NouvelUtilisateur.Nom" class="form-label fw-bold">Nom</label>
+                            <input asp-for="NouvelUtilisateur.Nom" class="form-control" />
+                            <span asp-validation-for="NouvelUtilisateur.Nom" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="NouvelUtilisateur.Email" class="form-label fw-bold">Email professionnel</label>
+                        <input asp-for="NouvelUtilisateur.Email" class="form-control" placeholder="nom@entreprise.com" />
+                        <span asp-validation-for="NouvelUtilisateur.Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="NouvelUtilisateur.Password" class="form-label fw-bold">Mot de passe provisoire</label>
+                        <input asp-for="NouvelUtilisateur.Password" class="form-control" type="password" />
+                        <span asp-validation-for="NouvelUtilisateur.Password" class="text-danger small"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning fw-bold w-100 shadow-sm">Créer le compte</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-7">
+        <div class="card shadow-sm border-0 border-top border-primary border-4">
+            <div class="card-header bg-white fw-bold">
+                Projets en attente d'approbation (@Model.ProjetsEnAttente.Count)
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.ProjetsEnAttente.Any())
+                {
+                    <div class="text-center py-5 text-muted">
+                        Aucun projet en attente
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var proj in Model.ProjetsEnAttente)
+                        {
+                            <div class="list-group-item p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-1 text-primary">@proj.Nom</h6>
+                                        <small class="text-muted">Proposé par : @proj.NomCreateur - @proj.DateCreation.ToString("dd/MM")</small>
+                                    </div>
+                                    
+                                    <div class="d-flex gap-1">
+                                        <form method="post" asp-page-handler="Approuver" asp-route-id="@proj.Id" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success fw-bold">Valider</button>
+                                        </form>
+                                        <form method="post" asp-page-handler="Refuser" asp-route-id="@proj.Id" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger fw-bold">Refuser</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <p class="text-muted small mb-0 bg-light p-2 rounded" style="white-space: pre-line;">@proj.Description</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
