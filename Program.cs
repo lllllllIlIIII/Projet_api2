@@ -10,7 +10,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login"; 
+        options.LoginPath = "/account/Login"; 
         options.AccessDeniedPath = "/Error";  
         options.ExpireTimeSpan = TimeSpan.FromHours(2);
         options.SlidingExpiration = true;
@@ -18,6 +18,9 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddScoped<UserService>(provider => new UserService(connectionString!));
 builder.Services.AddScoped<ProjetService>(provider => new ProjetService(connectionString!)); 
+builder.Services.AddScoped<TacheService>(provider => new TacheService(connectionString!));
+builder.Services.AddScoped<PdfExportService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
